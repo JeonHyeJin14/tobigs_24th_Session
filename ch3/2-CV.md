@@ -142,3 +142,34 @@
 - 최소 loss 최적화를 더 빠르고 효율적으로 수행 가능
 
 ## 8. ResNet
+<img width="317" height="272" alt="image" src="https://github.com/user-attachments/assets/234b0d1d-bb97-4296-ad50-1069457dca8f" />
+
+- Residual block을 겹겹이 쌓은 형태
+- 각 stage 내에서는 feature map size가 동일하나 다음 stage로 넘어갈때마다 feature map size 2배 감소, fillter개수 2배 증가
+
+- 깊은 신경망 학습 : residual block 를 통해 깊은 네트워크 구조에서도 효과적인 학습 가능
+- Vanishing Gradient 문제 해결 : 역전파 과정에서 gradient 흐름을 원활하게 유지함
+- Degradation 문제 완화 : residual learning 을 통해 깊어진 네트워크에서도 성능 유지
+
+## 9. UNet
+- 이미지 내의 각 픽셀을 의미 있는 라벨로 분류하는 Semantic Segmentation
+- 왼쪽에서 정보를 압축 (Encoding)하고 오른쪽에서 복원 (Decoding)하는 구조
+
+- Skip connection : 인코더의 각 레이어 출력을 대응하는 디코더 레이어에 연결해 공간적 세부 정보를 보존함
+- Contaracting path : 점진적으로 넒은 범위의 이미지 픽셀을 보며 문맥 정보를 추측
+- Expanding path : 문맥 정보를 픽셀 위치 정보와 결합하여 local detail를 복원
+
+# 02. Detection
+
+## 1. Detection
+<img width="539" height="212" alt="image" src="https://github.com/user-attachments/assets/07a1a034-fdc4-46f7-b935-155dc4f6deb2" />
+
+- 이미지 또는 영상 내의 object 위치를 특정(localizing)하고 분류(classifying)하는 과정
+- 특정 object를 찾아내고 해당 object의 bounding box를 제공하는 것이 목표
+
+<img width="599" height="270" alt="image" src="https://github.com/user-attachments/assets/33c47755-8685-4789-a689-8495763e6e32" />
+
+- 2-stage Detector : Regional Proposal (객체의 위치를 찾는 과정) 과 Classification (객체를 분류하는 과정)이 순차적으로 이루어짐
+- 1-stage Detector : Regional Prosal 과 Classification이 동시에 이루어짐
+
+## 2. YOLO

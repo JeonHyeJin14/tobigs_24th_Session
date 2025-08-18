@@ -107,4 +107,38 @@
   4. 반복적인 ReLU : 비선형성 강화, 표현력 증대
 
 ## 4. GoogLeNet
-<img width="659" height="221" alt="image" src="https://github.com/user-attachments/assets/33c69a6d-1e85-4237-9df3-039648856f3d" />
+<img width="633" height="187" alt="image" src="https://github.com/user-attachments/assets/b0b557b5-9e51-4002-b078-1f49e2ea2048" />
+
+- Inception module 이라는 서브 네트워크를 연속적으로 이어서 구성
+- 큰 사이즈의 커널이 제공하는 장점은 수용하며 weight parameter수를 줄일 수 있는 네트워크
+
+1. Inception module
+   - 1×1, 3×3, 5×5 합성곱(conv) + 3×3 풀링(pooling)을 동시에 수행 -> 비선형성
+   - 다양한 크기의 필터를 써서 여러 스케일의 특징을 한 번에 뽑아냄
+2. 1×1 Convolution의 활용
+   - 채널 수 줄이기 (차원 축소) -> 연산량과 파라미터 수 크게 감소
+   - 채널 간 정보도 섞어주므로 표현력 증가
+3. Global Average Pooling
+   - 마지막에 완전 연결 layer대신 평균 풀링 사용
+   - 파라미터 수 줄고, 과적합 위험 감소
+
+## 5.Degradation
+<img width="555" height="198" alt="image" src="https://github.com/user-attachments/assets/85219ad1-114f-4573-85de-89dd1207aed0" />
+
+- VGGNet, GooLeNet 이후 더 깊은 네트워크에 대해 연구가 증가했지만 네트워크가 깊어질수록 성능이 저하됨
+- 네트워크가 깊어질수록 vanishing gradient 문제가 발생해 제대로 최적의 loss 감소가 이루어지지 않음
+
+## 6. vanishing gradient
+<img width="661" height="228" alt="image" src="https://github.com/user-attachments/assets/f0dbe0a4-e321-44e7-979b-e1f4a7766d7e" />
+
+- 네트워크가 깊어질수록 역전파 과정에서 gradient가 점점 작아져서 초반 층의 가중치가 제대로 업데이트되지 않는 문제
+- 활성함수의 작은 기울기가 누적되어 기울기가 사라지는 현상
+
+## 7. Residual Learning
+<img width="597" height="259" alt="image" src="https://github.com/user-attachments/assets/63f88198-8961-434e-8f76-e98e614f6106" />
+
+- 잔차를 최소화하는 학습 방법
+- Gradient vanishing 현상 극복 가능
+- 최소 loss 최적화를 더 빠르고 효율적으로 수행 가능
+
+## 8. ResNet

@@ -64,43 +64,35 @@
 
     
 예시: `"I like pizza"`  
-\[
-P(w_1, w_2, \dots, w_n) = \prod_{k=1}^{n} P(w_k \mid w_1, \dots, w_{k-1})
-\]
+<img width="505" height="121" alt="image" src="https://github.com/user-attachments/assets/083ab6a3-ffad-4eee-9909-a1bf8f927213" />
+
 
 ## 2. Markov Assumptioin (마르코프 가정)
 - 다음 단어는 전체 과거 시퀀스가 아니라, 최근 n-1개의 단어에만 의존한다고 가정
-- \[
-P(w_n \mid w_1, \dots, w_{n-1}) \approx P(w_n \mid w_{n-1})
-\]
+<img width="287" height="35" alt="image" src="https://github.com/user-attachments/assets/c546a99f-06eb-4756-9575-5705671285b1" />
+
 
 ## 3. Bigram & N-gram 확률
 ### Bigram (2-gram) 가정
-\[
-P(w_n \mid w_1, \dots, w_{n-1}) \approx P(w_n \mid w_{n-1})
-\]
+<img width="436" height="96" alt="image" src="https://github.com/user-attachments/assets/521c6809-e142-45e1-9642-d7fdd264263d" />
+
 
 ### 일반 N-gram 가정
-\[
-P(w_n \mid w_1, \dots, w_{n-1}) \approx P(w_n \mid w_{n-N+1}, \dots, w_{n-1})
-\]
+<img width="301" height="48" alt="image" src="https://github.com/user-attachments/assets/6390bc5f-0a06-4312-b416-b98b3ab79beb" />
+
 
 ## 4. 확률 계산 (MLE)
 - N-grma확률은 빈도수 기반으로 추정
-\[
-P(w_n \mid w_{n-1}) = \frac{C(w_{n-1}, w_n)}{C(w_{n-1})}
-\]
+<img width="206" height="107" alt="image" src="https://github.com/user-attachments/assets/0625fe0a-8092-4fc6-b0b0-9c4750a5cd07" />
 
 ## 5. 예시 (Bingram)
-문장:  
-<s> I am Sam </s>
-<s> Sam I am </s>
-<s> I do not like green eggs and ham </s>
+<img width="601" height="194" alt="image" src="https://github.com/user-attachments/assets/b1c7776c-9a31-4c90-8e59-b8ff346b659f" />
 
-### 확률 계산 예시
-- \( P(I \mid <s>) = \frac{2}{3} = 0.67 \)  
-- \( P(Sam \mid <s>) = \frac{1}{3} = 0.33 \)  
-- \( P(am \mid I) = \frac{2}{3} = 0.67 \)  
-- \( P(do \mid I) = \frac{1}{3} = 0.33 \)  
-- \( P(<s> \mid Sam) = \frac{1}{2} = 0.5 \)  
-- \( P(Sam \mid I) = \frac{1}{2} = 0.5 \)  
+
+# 04. Word Embedding
+
+## 1. Word Embedding
+- 단어의 의미를 벡터 공간에서의 위치로 정의
+- 의미가 비슷한 단어일수록 벡터 공간에서 가깝게 위치함
+
+## 2. Word Embedding 종류

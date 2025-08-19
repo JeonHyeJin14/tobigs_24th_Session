@@ -57,9 +57,9 @@
 - LeNet보다 규모가 훨씬 크고 깊은 구조
 - ImagNet 같은 대규모 데이터 셋에 최적화된 모델
 - 특징
-  1. 대규모 & 깊은 구조
-     - LeNeta보다 훨씬 크고 깊은 네트워크
-     - 224*224*3 이미지 입력을 처리할 수 있도록 설계
+1. 대규모 & 깊은 구조
+  - LeNeta보다 훨씬 크고 깊은 네트워크
+  - - 224*224*3 이미지 입력을 처리할 수 있도록 설계
 
 2. 병렬 GPU 활용
    - Conv layer와 FC layer를 2개의 GPU에 분산 -> 학습 속도 크게 향상
@@ -96,15 +96,15 @@
    - 여러개의 3*3 conv를 쌓으면 큰 receptive field 효과를 얻으면서도 파라미터 감소
      예: 7×7 conv 1개 ≈ 3×3 conv 3개 (더 많은 비선형성, 더 적은 파라미터)
 
-  2. Deeper Network
-     - AlexNet (8-layer)보다 훨씬 깊음
-     - 깊이를 늘려서 성능을 향상시킴
+3. Deeper Network
+   - AlexNet (8-layer)보다 훨씬 깊음
+   - 깊이를 늘려서 성능을 향상시킴
        
-  3. 파라미터 효율성
-     - 통일 receptive field에 더 적은 파라미터를 사용함
-     > receptive field : fillter가 한 번에 볼 수 있는 입력의 공간 영역
+3. 파라미터 효율성
+   - 통일 receptive field에 더 적은 파라미터를 사용함
+   > receptive field : fillter가 한 번에 볼 수 있는 입력의 공간 영역
     
-  4. 반복적인 ReLU : 비선형성 강화, 표현력 증대
+4. 반복적인 ReLU : 비선형성 강화, 표현력 증대
 
 ## 4. GoogLeNet
 <img width="633" height="187" alt="image" src="https://github.com/user-attachments/assets/b0b557b5-9e51-4002-b078-1f49e2ea2048" />
@@ -173,3 +173,64 @@
 - 1-stage Detector : Regional Prosal 과 Classification이 동시에 이루어짐
 
 ## 2. YOLO
+- 1-stage-detection 방법을 고안하여서 실시간으로 객체 감지를 간으하게 한 모델
+
+<img width="367" height="275" alt="image" src="https://github.com/user-attachments/assets/832f8439-804d-44bc-ba6c-14ab20717aa4" />
+
+- 전역적 이미지 처리 : 이미지 전체를 한 번만 살펴보고 객체의 위치와 종류를 동시에 예측
+- 통합된 모델을 사용 : 이미지 분류와 바운딩 박스 회귀를 하나의 CNN 모델로 통합해 동시에 수행함
+- 높은 검출 정확도 : 새로운 이미지에 대해서도 일관된 검출 정확도를 보여주며 overfitting이 상대적으로 적용
+
+EX) 4*4 grid, cell 당 예측해야 하는 bounding box(bbox) 개수 =2, 총 클래스 20
+<img width="720" height="277" alt="image" src="https://github.com/user-attachments/assets/f1f9eb42-af6c-4aff-ae7b-1b580babfa13" />
+
+<img width="643" height="264" alt="image" src="https://github.com/user-attachments/assets/5771131c-773c-48e5-88b4-73cc3f6f67e8" />
+
+<img width="665" height="281" alt="image" src="https://github.com/user-attachments/assets/c71e041f-5b77-45f4-8768-44d1df153fab" />
+
+<img width="525" height="217" alt="image" src="https://github.com/user-attachments/assets/d4da5f67-e42a-4997-93e3-61c2a048d3fc" />
+
+## 3. Focal Loss
+- Background에 대한 Bounding Box의 비율이 객체 영역보다 압도적으로 높아, 학습 과정에서 class imbalance 문제가 발생할 수 있음
+- class imbalance 문제로 인해 easy negative의 영향이 압도적으로 커지며 학습이 비효율적으로 진행됨
+- 또한 모델이 hard posotove(실제 객체)를 detect 하고자 학습하지 않음
+
+<img width="735" height="221" alt="image" src="https://github.com/user-attachments/assets/6c522de0-d139-47f9-92af-a2a6e346afdc" />
+
+- y: y = 1 (foreground), y = 0 (background)
+- p: 모델이 y = 1이라고 예측한 확률
+
+<img width="537" height="247" alt="image" src="https://github.com/user-attachments/assets/f3a6cfa2-2f0f-4ed3-a184-44830a6bf713" />
+
+## 4. Transformer
+- 전체 입력 간의 관계를 한 번에 파악하여 병렬 처리와 장기 의존성 학습이 가능한 모델 구조
+- self-attention : 메커니즘을 사용하여 각 입력 요소의 연관성을 학습
+
+<img width="179" height="206" alt="image" src="https://github.com/user-attachments/assets/a25dbc60-cf27-
+420f-8248-878b5a5d454e" />
+
+- Self-attention : 문장 내 모든 단어 쌍 사이의 관계를 직접 계산하여 전체 문장의 의미를 이해함
+- Multi-Head Attention :: 단일 self-attention 레이어를 여러 개 사용하는 기법으로, 모델이 다양한 위치의 패턴을 동시 학습
+- Positional Encoding : 입력 시퀀스의 각 위치에 대한 정보를 추가로 인코딩하여 모델에 제공
+
+## 5. Vision Transformer (VIT)
+<img width="668" height="245" alt="image" src="https://github.com/user-attachments/assets/552bd0c6-b7e3-4c05-a6a5-ce08a731d7b1" />
+
+- 자연어 처리 (NLP)에서 많이 사용되는 Transformer를 Vision Task를 적용한 모델
+- 공간에 대한 bias가 없어서 많은 사전데이터 학습이 필요함
+
+<img width="668" height="245" alt="image" src="https://github.com/user-attachments/assets/b046e0aa-5c24-42ee-8639-f81450e5e960" />
+
+- Transformer : 순차적으로 transformer encoder 블록을 여러번 통과시켜 특성을 추출한다.
+- Classfication token 추출 : transformernencoder의 최종 출력 중 Classfication token에 해당하는 벡터를 선택
+- MLP Head & Softmax : 추출된 CLS 벡터에 분류 헤드를 적용하고, softmax로  최종 클래스 확률을 계산
+
+- VIT는 CNN에 비해 Inductive bias가 상대적으로 낮은 모델
+- Inductive bias : 모델이 자체적으로 가지고 있는 편견
+
+<img width="748" height="238" alt="image" src="https://github.com/user-attachments/assets/0a0d688c-ec27-4ee1-838e-93d40a66550a" />
+
+
+# 03. Vision Transformer
+
+<img width="529" height="260" alt="image" src="https://github.com/user-attachments/assets/a11e2cef-490d-406f-a9ae-e00818e6ddc9" />

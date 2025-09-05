@@ -187,3 +187,99 @@
 - 이는 단순한 차원 축소를 넘어, 데이터 생성, 변환, 해석에도 활용됨
 - GenAI 모델들이 잠재 차원에서 스타일 변환, 속성 조정 등을 할 수 있는 기반이 바로 이 개념
   
+### 6) Reasonable Distance Metric
+
+1. 아이디어
+- 고차원 공간에서는 같은 유클리드 거리라도 실제 데이터의 의미적 차이를 잘 반영하지 못한다.
+- 따라서 단순히 좌표 차이를 계산한 유클리드 거리는 데이터 의미와 동떨어질 수 있음
+  -> 의미가 없는 거리
+- 해결책 : 데이터를 매니폴드 위에 올려서 구부러진 실제 구조를 따라가는 거리를 써야함
+
+2. 그림 해석
+<img width="515" height="194" alt="image" src="https://github.com/user-attachments/assets/5b934245-288b-4f82-84b8-e65908925116" />
+
+- 나선 구조
+  - 두 점 A, B는 고차원 유클리드 공간에서는 가까워 보이지만 실제 매니폴드 위에서는 멀리 떨어져 있음
+    -> 단순 유클리드 거리 대신 매니폴드의 구조를 따라간 거리가 합리적임
+- 골프 자세 예시
+  <img width="490" height="267" alt="image" src="https://github.com/user-attachments/assets/1ca5e2a1-1246-424c-8bc7-6754cde8b947" />
+
+  - Interpolation in high dimension : 픽셀 공간에서 단순 보간 -> 중간 이미지가 부자연스러움
+ 
+  <img width="516" height="273" alt="image" src="https://github.com/user-attachments/assets/61e706c8-7211-47b6-8dcd-cc21e410652a" />
+
+  - Interpolation in manifold : 매니폴드 위에서 보간 -> 자연스러운 동작 변화
+
+3. 의미
+- 데이터 간 거리 측정은 매니폴드 기반이어야 의미가 있다
+  - 고차원에서의 직선 거리는 실제 의미 반영 못함
+  - 매니폴드 상의 거리는 데이터의 본질적 차이를 반영함
+
+ # 04. VAE
+
+ ## 1. Autoencoder
+
+ ### 1) Dimensionality Reduction (차원축소)
+ - Linear (선형기법)
+   - PCA
+   - LDA
+  - Non-Linear (비선형 기법)
+    - Autoencoders
+    - t-SNE
+    - Isomap
+    - LLE
+    - -> 복잡하고 곡선적인 매니폴드 구조를 반영
+  > Auroencoder는 이 중 비선형 차원 축소 기법으로 분류됨
+
+### 2) Aurodencoder 개념
+- 입력 데이터를 압축(Encoding)했다가 다시 복원(Decoding)하는 신경망구조
+- 데이터를 단순하게 복사하는 게 아니라 압축/복원 과정에서 중욯나 특징을 학습
+
+### 3) 그림 설명
+<img width="302" height="248" alt="image" src="https://github.com/user-attachments/assets/2ce1a23c-bd8a-4a24-9fb5-d9f75aff071a" />
+
+<img width="323" height="355" alt="image" src="https://github.com/user-attachments/assets/a61458b1-11fc-49fe-b5b8-6073bc74f16c" />
+
+- Input -> Bottleneck Layer -> output
+- Encoding : 입력 데이터를 작은 latent vector z로 압축
+- Decoding : z를 다시 원래 데이터 형태로 복원
+- Bottleneck(병목 현상)이 있기 때문에 모델은 데이터의 핵심 특징만 남기고 불필요한 부분은 버리도록 학습함
+
+#### Bottleneck : 병목현상
+- 전체 네트워크를 통과 할 수 있는 정보의 양을 제한하여 입력 데이터의 학습된 압축을 이끌어 내는 역할
+
+### 4) 의미
+- 오토인코더는 단순 차원 축소 도구보다 더 복잡한 데이터 분포 (비선형 구조)를 잘 표현할 수 있음
+- 데이터 전처리, 노이즈 제거, 특징 추출, 생성 모델 기반으로 자주 활용됨
+
+### 5) 구조
+<img width="334" height="357" alt="image" src="https://github.com/user-attachments/assets/d983f0a2-3829-4789-a323-49bb458181f9" />
+
+- x -> Encoder h() -> 잠재 표현 z -> Decoder g() -> 출력 y
+- 목적 : 입력과 출력이 최대한 비슷하도록
+- 손실함수
+<img width="206" height="77" alt="image" src="https://github.com/user-attachments/assets/5de89ab2-89d5-4bae-a55d-37caaa6aea7f" />
+
+-> 입력과 복원된 출력 간의 차이를 최소화하도록 학습
+
+### 6) Encoder 관점
+- 역할 : 입력 데이터를 최소한의 정보로 압축
+- Training DB의 패턴을 학습해서 중요한 특징만 latent vector z에 담음
+
+### 7) Decoder 관점
+- 역할 : Encoder가 만든 잠재 벡터 z를 받아서 손실을 최소화하는 방향으로 원래 데이터 복원
+- 압축된 표현을 다시 펼처서 가능한 한 원래와 유사한 데이터를 만듦
+
+### 8) AE(Autoencoder)
+- 입력 데이터를 압축 -> 다시 복원 (매니폴드 러닝)
+- 구조 : Encoder -> Decoder
+- 특징 : 단순히 입력 x를 자기 자신으로 복원하는 것이 목표 -> 데이터 압축 및 특징 학습에 초점
+
+### 9) VAE (Variational Autoencoder)
+- 데이터의 생성
+- Decoder(출력 생성)을 잘 학습시키기 위해 Encoder에서 분포를 학습
+- Encoder가 단일 벡터를 내는 게 아니라 평균 벡터 + 분산 벡터를 출력 -> 잠재 공간을 분포로 모델링
+- Decoder는 이 분포에서 샘플링한 z로부터 데이터를 생성
+
+### 10) AE vs VAE 핵심 차이
+- AE : 단순 압축/복원

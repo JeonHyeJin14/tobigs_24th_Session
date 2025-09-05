@@ -271,11 +271,17 @@
 - 압축된 표현을 다시 펼처서 가능한 한 원래와 유사한 데이터를 만듦
 
 ### 8) AE(Autoencoder)
+<img width="370" height="94" alt="image" src="https://github.com/user-attachments/assets/fe8333de-8ebe-4977-9dfa-d546215827b0" />
+
 - 입력 데이터를 압축 -> 다시 복원 (매니폴드 러닝)
 - 구조 : Encoder -> Decoder
 - 특징 : 단순히 입력 x를 자기 자신으로 복원하는 것이 목표 -> 데이터 압축 및 특징 학습에 초점
 
 ### 9) VAE (Variational Autoencoder)
+<img width="373" height="160" alt="image" src="https://github.com/user-attachments/assets/457583dc-d199-4e04-889e-74d45c4e0875" />
+
+<img width="298" height="379" alt="image" src="https://github.com/user-attachments/assets/39448273-e542-44ff-ba6b-d51e63150ad4" />
+
 - 데이터의 생성
 - Decoder(출력 생성)을 잘 학습시키기 위해 Encoder에서 분포를 학습
 - Encoder가 단일 벡터를 내는 게 아니라 평균 벡터 + 분산 벡터를 출력 -> 잠재 공간을 분포로 모델링
@@ -283,3 +289,76 @@
 
 ### 10) AE vs VAE 핵심 차이
 - AE : 단순 압축/복원
+- VAE : 잠재 공간을 확률적 분포로 모델링 함 -> 새로운 샘플 생성이 가능함
+- 구조는 비슷하지만 목표가 다름
+    - AE : 입력을 잘 복원 하는것이 목표
+    - VAE : 학습한 분포에서 새로운 데이터를 생성하는 게 목표
+
+### 11) VAE의 장점
+- Latent vector z를 확률적 분포로 다룸 :
+  - 새로운 데이터 샘플링 가능 -> Generative capability
+  - Latent space에서 벡터를 조작하면 생성 이미지의 속성(control)가능
+  - Prior distribution p(z)를 통해서 수학적으로 잘 정의됨
+
+ ### 12) MLE 직접적 사용 가능 ?
+ <img width="419" height="157" alt="image" src="https://github.com/user-attachments/assets/79e57227-7b4c-4f6e-9647-82e89e371498" />
+
+ - 단순히 MSE만 최소화 하면 숫자 이미지를 복원할 때 픽셀 값은 비슷하지만 의미적으로 다른 이미지가 나올 수 있음
+
+#### Sampling 문제
+- VAE는 latetnt space와 prior가 잘 정렬되지 않아서 의미 없는 샘플이 생김
+- -> 학습 시 제대로 된 gradient 전파도 안됨
+
+#### 해결책 -> Reparameterizarino Trick
+- 이상적인 샘플링 함수를 도입해야함
+
+### 13) Variational Inference (변분 추론)
+<img width="728" height="223" alt="image" src="https://github.com/user-attachments/assets/6319e63f-d180-486e-9434-52a208329455" />
+
+- 복잡한 진짜 확률 분포를 직접 구하지 못하니까 계산하기 쉬운 분포로 근사해서 학습
+- 학습이 잘 되기 위한 z sample을 잘 만들어내는 함수
+- 확률 분포 중에 Target Distribution을 잘 나타내는 Distribution을 찾기
+- 잘 찾은 z로부터 샘플링을 해서 Generator 생성
+
+### 14) ELBO
+<img width="474" height="251" alt="image" src="https://github.com/user-attachments/assets/3e0325c8-3e81-
+415f-8323-7353feb3755b" />
+
+<img width="160" height="171" alt="image" src="https://github.com/user-attachments/assets/9ada3f6c-af77-44d7-9e00-9512da3b9762" />
+
+1. KL Divergence
+<img width="206" height="33" alt="image" src="https://github.com/user-attachments/assets/4a7c8122-bdf6-4b35-9c5b-8d7ac5aa61f8" />
+
+- 두 분포 q와 p 사이의 거리 -> q가 p에 가까울수록 값이 작음
+
+2. 문제
+<img width="61" height="43" alt="image" src="https://github.com/user-attachments/assets/20a21fdf-e7c7-4f5f-b61d-9394d82314b2" />
+
+- 직접 구하기 어려워서 KL을 바로 계산 못함
+
+3. 해결책  = ELBO
+- 대신 ELBO(Evidence Lower Bound)를 최대화함
+- ELBO를 크게 만들면 -> KL 값이 작아짐 (근사 분포 q가 진짜 분포 p에 가까워짐)
+
+4. 변형된 KL 최적화 
+<img width="201" height="36" alt="image" src="https://github.com/user-attachments/assets/0e86afb7-b8a6-4249-9f93-75cf499b8c46" />
+
+- p(z) : prior distribution -> 근사 posterior가 prior와도 너무 동떨어지지 않도록 정규화 역할을 함
+
+
+<img width="747" height="346" alt="image" src="https://github.com/user-attachments/assets/467314ab-3467-4642-97b4-13ea51f7ab2c" />
+
+<img width="484" height="314" alt="image" src="https://github.com/user-attachments/assets/705786a4-73d2-4494-842b-4c086e19fcbd" />
+
+
+<img width="486" height="264" alt="image" src="https://github.com/user-attachments/assets/5621c4be-4202-4df5-aaac-75dd4bf37885" />
+
+# 05.GAN
+
+## 1.등장배경
+
+<img width="546" height="255" alt="image" src="https://github.com/user-attachments/assets/e62e3605-e5b5-4073-b1c7-459b0ba139bd" />
+
+- 기존 모델의 문제점 : 속도가 느리거나 이미지가 흐릿함
+- GAN은 likelihood를 직접 계산하지 않고, 판별기를 속이는 방식으로 학습함 -> 훨신 사실적인 이미지 생성이 가능하다
+- 

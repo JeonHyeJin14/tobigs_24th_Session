@@ -361,4 +361,99 @@
 
 - 기존 모델의 문제점 : 속도가 느리거나 이미지가 흐릿함
 - GAN은 likelihood를 직접 계산하지 않고, 판별기를 속이는 방식으로 학습함 -> 훨신 사실적인 이미지 생성이 가능하다
-- 
+
+## 2. 기본 아이디어
+<img width="725" height="264" alt="image" src="https://github.com/user-attachments/assets/a0f751e5-20cc-4b85-b839-ac16bc274b83" />
+
+### 1) Generator (생성자)
+- 입력 : 잠재공간에서 샘플링한 노이즈 z
+- 출력 : 가짜 샘플 G(z)
+- 목표 : 진짜 데이터처럼 보이는 샘플 생성
+
+### 2) Discriminator (판별자)
+- 입력 : 데이터 x (진짜 혹은 가짜)
+- 출력 : 진짜일 확률 (0~1 사이값)
+- 목표 : 진짜와 가짜를 정확하게 구별함
+
+## 3. 목적함수
+<img width="725" height="264" alt="image" src="https://github.com/user-attachments/assets/f8d2be84-1e6c-46c7-a142-7fc408014c53" />
+
+<img width="644" height="173" alt="image" src="https://github.com/user-attachments/assets/715f0dc1-66db-44bb-8799-ac65d7da0633" />
+
+- D(x) : 판별자가 실제 데이터를 입력받았을 때 진짜라고 보는 확률
+- D(G(z)) : 생성자가 만든 데이터를 입력받았을 때 진짜라고 착각하는 확률
+  
+### 1) Dscriminator
+- 진짜 데이터 x : D(x)은 1에 가깝게
+- 가짜 데이터 G(z) : D(G(z))는 0에 가깝게
+
+### 2) Generator
+- G(z)가 진짜처럼 보이도록 만들어서 D(G(z))를 1에 가깝게
+
+> 시간이 지날수록 판별자는 위조를 잘 잡아내고 생성자는 더 정교하게 위조함
+
+
+## 4. 학습 과정의 직관적 설명 
+<img width="649" height="183" alt="image" src="https://github.com/user-attachments/assets/f1b3c6ba-0787-4ffd-813d-138f3788df3c" />
+
+### 1) 초기 상태
+- 생성자는 아무 의미 없는 랜덤 이미지를 생성함
+- 구분자는 쉽게 가짜와 진짜를 구별함
+
+### 2) 반복학습
+- 생성자는 구분자를 속이는 방향으로 개선
+- 구분자는 점점 더 정교하게 구별함
+
+### 3) 균형점
+- 구분자가 진짜와 가짜를 구별할 수 없을때 = 무작위 추측으로 인해 정답률 50% -> D(x) = 0.5
+
+## 5. 한계점
+1. 모드붕괴 (Mode Collapse)
+   - 생성자가 특정한 몇 가지 패턴만 생성함
+  
+2. 훈련 불안정성
+   - G와 D의 학습 균형을 맞추기 어려움
+   - D가 너무 강하면 G 학습 불가, G가 너무 강하면 D 무력화
+
+3. 평가 지표 부족
+   - 이미지가 진짜처럼 보인다는 것은 주관적임
+   - 보통 IS, FID 사용함 -> 완벽하지 않음
+
+4. 이론적 난점
+   - 수렴 보장이 없음
+   - 로컬 미니멈에 빠지거나 발산 가능
+
+
+# 06. DIFFUSION & TREND
+
+## 1. Diffusion Model
+: 물에 떨어뜨린 물감이 퍼지는 것과 같이 분자가 확산되는 과정에서 착안
+- 이미지의 입자들이 흩어지는 과정을 모델링 할 수 있다면 반대로 노이즈로부터 이미지를 얻을 수 있을 것
+- 데이터를 생성하는 deep generative moel
+- 현재 image에서 가장 잘 작동하는 generative model
+
+<img width="505" height="332" alt="image" src="https://github.com/user-attachments/assets/00d1910b-0087-4844-9234-76bfd35b8f8e" />
+
+<img width="671" height="150" alt="image" src="https://github.com/user-attachments/assets/b5dbc774-6ae4-4435-b140-e70331c16ebb" />
+
+- Forward Process : data로부터 noise를 조금씩 더해지면서 data를 완전한 noise로 생성
+- Reverse Process : noise로부터 복원해가면서 data로 생성
+
+
+## 2. Diffusion Model의 종류
+<img width="841" height="152" alt="image" src="https://github.com/user-attachments/assets/81e14fa9-111a-422d-8c13-dfffdbec7124" />
+
+### 1) DDPM
+- 디퓨전 모델의 가장 기본적인 형태
+- 확산과정과 역확산 과정으로 구성됨
+
+### 2) DDIM
+- DDPM보다 샘플링 속도를 빠르게 개선한 모델
+
+### 3) LDM
+<img width="743" height="235" alt="image" src="https://github.com/user-attachments/assets/25ccca7f-274c-4a25-9a87-1f7b1cd75786" />
+
+- 텍스트와 같은 추가적인 입력을 받아서 고품질 이미지를 생성하는 모델
+- stable diffusion 과 같은 텍스트-이미지 생성 모델
+- CLIP(자연어이해) , UNet(이미지생성), VAE(데이터 압축 및 복원)등 여러 인공신경망을 결합해 높은 성능을 보여줌
+

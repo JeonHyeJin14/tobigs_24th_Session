@@ -100,4 +100,4 @@
 
 ## 2. 트랜스포머의 정의
 - 트랜스포머 : 기존의 seq2seq2 구조인 인코더-디코더를 따르면서도 RNN을 사용하지 않고 attention mechanism으로만 설계한 구조
-  - 
+  - stacked self-attention

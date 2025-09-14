@@ -101,3 +101,104 @@
 ## 2. 트랜스포머의 정의
 - 트랜스포머 : 기존의 seq2seq2 구조인 인코더-디코더를 따르면서도 RNN을 사용하지 않고 attention mechanism으로만 설계한 구조
   - stacked self-attention
+  - point-wise, fully connected layer
+- N개의 셀로 구성되는 인코더/디코더 구조 + Multi-head self attention 사용
+  1. Sequential conputation의 감소 -> 더 많은 병렬 연산 가능
+  2. 더 많은 단어 간의 dependency를 모델링
+- 단어 입력을 순차적으로 받았던 RNN 방식이 아니므로 입력 문장에서 단어의 위치 정보를 알려주는 새로운 방식이 필요함 = Positional Encoding
+
+## 3. 트랜스포머 아키텍처의 핵심 : 셀프 어텐션 (Self-Attention)
+<img width="365" height="353" alt="image" src="https://github.com/user-attachments/assets/c16914ae-57e7-496d-b1ea-92f9c3dc8d55" />
+
+: 주어진 작업을 해결하기 위해서 각 단어가 시퀀스 내의 다른 단얻르과 상호작용하는 연관성을 가중치로 부여해 문맥적인 관계를 파악함
+
+ex. it의 의미는 ? animal vs street
+- 문장 전체를 참고해서 연관된 단어를 좀 더 집중 (Attention)
+<img width="719" height="415" alt="image" src="https://github.com/user-attachments/assets/4f29c523-dd89-45c8-b0f8-21569358e289" />
+
+- 결국 트랜스포머 기반으로 하는 LMM은 고정된 수의 단어만을 고려하지 않고 전체 문맥을 고려할 수 있다.
+
+## 4. 트랜스포머 구조
+<img width="388" height="533" alt="image" src="https://github.com/user-attachments/assets/ad0dea3d-5cd8-48a3-964e-a162ca99e273" />
+
+<img width="484" height="325" alt="image" src="https://github.com/user-attachments/assets/2119e792-028c-4dd7-b039-d7b9bb2c5a17" />
+
+- 인코더 : 주어진 입력 시퀀스를 이해한다.
+- 디코더 : 파악한 정보를 바탕으로 텍스트를 생성한다
+
+## 5. 트랜스포머의 각 단계 설명
+
+### 1) 단어 임베딩 Word Embedding
+<img width="1063" height="133" alt="image" src="https://github.com/user-attachments/assets/b0b3c7f3-9d6b-4337-914f-36d248797837" />
+
+- input과 output 토큰을 d_model 차원의 벡터로 전환하기 위해서 임베딩 학습
+- 임베디 과정은 맨 아래 레이어에서만 수행됨
+- d_model = 임베팅 벡터의 차원 = 인코더에서 정해진 입력의 크기 = 디코더에서 정해진 출력의 크기
+
+### 2) Positional Encoding
+<img width="597" height="232" alt="image" src="https://github.com/user-attachments/assets/05a7e23a-ce45-460c-9091-5442c866f626" />
+
+- transformer의 입력으로 사용되기 전에 Positional encoding을 더해서 단어의 위치 정보를 전달한다.
+<img width="416" height="214" alt="image" src="https://github.com/user-attachments/assets/28d24004-3f10-4850-9961-64780502bd5e" />
+
+- enbedding vector와 더해질 수 있도록 positional encoding도 d_model 차원
+- pos : 입력 문장에서 임베딩 벡터의 위치
+- 유의점
+  - 순서 정보가 보존됨
+  - 같은 단어라고 해도 문장 내의 위치에 따라서 임베딩 벡터의 값이 달라질 수 있음
+ 
+### 3) Encoder
+  <img width="582" height="286" alt="image" src="https://github.com/user-attachments/assets/53703787-ddeb-456d-bf9b-452ba9ec64e7" />
+
+- Transformer의 인코더는 6개의 레이어로 구성되며 하나의 레이어는 2개의 서브 레이어로 구성됨
+ <img width="654" height="308" alt="image" src="https://github.com/user-attachments/assets/34a1625a-c86c-4a32-aeda-92c73c231d85" />
+
+- 2개의 서브 레이어와 더불어서 Add&Norm으로 표현됨
+- Residual connection, Layer Normalization이 사용됨
+
+### 4) Decoder
+<img width="546" height="574" alt="image" src="https://github.com/user-attachments/assets/07303052-69f2-4356-a378-a25370378e27" />
+
+- Transformer의 디코더는 6개의 레이어로 구성되며 인코더와 달리 하나의 레이어는 3개의 서브 레이어로 구성되어 있음
+- self-attention sub-layer는 인코더와 다르게 masking 되어 있음
+  -> 이를 통해 현재 단어가 뒤에 있는 단어를 참조하지 못하도록 막는다
+
+# 03. LLM : Large + Language Model
+
+## 1. LLM 
+<img width="1305" height="378" alt="image" src="https://github.com/user-attachments/assets/a7584fec-b7ae-4e88-b5dc-d921c8d798e6" />
+
+: 대규모 + 언어 모델의 결합이 성능 향상을 이끈다
+- 수십 억 ~수천 억의 파라미터를 갖는 LLM의 출현
+  - 언어 모델의 성능 향상 + 새로운 문제 해결 능력의 발현
+  - 자연어 처리의 한 분야였던 언어 모델링에서 벗어나 다양한 작업을 수행할 수 있는 사전 학습 모델이 됨
+ 
+## 2. LLM과 Foundation Model
+- Foundation Model
+  - 대규모 데이터로 학습된 범용적인 사전학습 모델 (Base) -> 다양한 Task에 적용 가능
+- LLM은 Foundation Model의 대표사례
+  - 대규모 텍스트 데이터 학습
+  - 단순 다음 단어 예측 Task를 벗어나 다양한 작업 수행이 가능함
+> LLM은 현재 가장 흔하게 쓰이는 Foundation Model
+
+# 04. Self-Supervised Learning(자기 지도 학습)
+
+: 라벨이 없는 untagged 데이터를 활용하며 데이터 자체에서 정답을 만들어내어 학습하는 방식
+<img width="584" height="252" alt="image" src="https://github.com/user-attachments/assets/2c86f2f6-ea98-4272-8e2f-edfa797bb64a" />
+
+- 등장배경 : Tagged data의 수집 및 확보에 큰 비용이 요구됨
+- 자기 지도 학습은 적은 수의 Tagged data로 모델 size 증가와 성능을 높일 수 있다는 장점
+
+<img width="641" height="340" alt="image" src="https://github.com/user-attachments/assets/04b2a3f5-01d6-44ef-870b-e4df3db4af41" />
+
+1. Pre-trained 모델 생성
+   : 대량의 Untagged data를 이용해 데이터셋에 내재되어 있는 특징을 학습
+
+2. Downstream task
+   : 소량의 Targged data와 Pre-train 모델을 활용해 Fine-tuning을 진행함
+
+<img width="462" height="348" alt="image" src="https://github.com/user-attachments/assets/1c86ed90-e164-42df-aa25-120089e1d482" />
+
+### 자동 인코딩 언어모델 (Autoencoding Language Model - AE)
+: 마스킹처럼 입력이 손상된 상태에서 원래 입력을 복원하는 방식
+- 주변 컨텍스트를 활용해 텍스트에서 누락되거나 가려진 단어를 예측하도록 훈련됨

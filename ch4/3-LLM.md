@@ -199,6 +199,92 @@ ex. it의 의미는 ? animal vs street
 
 <img width="462" height="348" alt="image" src="https://github.com/user-attachments/assets/1c86ed90-e164-42df-aa25-120089e1d482" />
 
-### 자동 인코딩 언어모델 (Autoencoding Language Model - AE)
+## 1. 자동 인코딩 언어모델 (Autoencoding Language Model - AE)
 : 마스킹처럼 입력이 손상된 상태에서 원래 입력을 복원하는 방식
 - 주변 컨텍스트를 활용해 텍스트에서 누락되거나 가려진 단어를 예측하도록 훈련됨
+
+-> 입력 문장의 의미와 구조를 이해하는데 탁월함
+
+EX) BERT, RoBERTa, ELECTRA
+
+## 2. Masked Language NOdel (MLM)
+<img width="466" height="336" alt="image" src="https://github.com/user-attachments/assets/24797a09-ba46-4e96-9603-6fe51a327799" />
+
+: AE의 대표적인 학습 방식
+- 입력 문장으 일부 토큰을 MASK로 바꾸고 이를 예측하도록 학습함
+- 주변 컨텍스트(문맥, 주변 단어들 정보)를 이해하는데 효과적
+
+## 3. Encoder-only-model
+- AE 기반 모델은 주로 Transformer Endocer만을 이용함
+- 입력 : 전체를 인코딩한느 모델 구조
+- 출력 : 입력과 길이가 같은 시퀀스 (각 입력 토큰의 벡터 표현)
+
+<img width="866" height="205" alt="image" src="https://github.com/user-attachments/assets/75c4fa2c-aa0b-4f91-92e3-ad65737acde3" />
+
+- 한 단어를 인코딩할 때 앞과 뒤 단어를 함께 고려함
+- 현재 단어를 이해할 때 양옆의 모든 단어 정보를 활용
+
+## 4. BERT 
+<img width="593" height="303" alt="image" src="https://github.com/user-attachments/assets/f933f9c4-fd17-4c78-b5a5-366345c26f91" />
+
+: AE 계열에 속하며 MLM방식으로 학습된 Endocer-only 구조의 모델
+<img width="577" height="237" alt="image" src="https://github.com/user-attachments/assets/bec0da0b-80e5-410d-997b-5409c394414b" />
+
+## 5. AR(Autoregressive Language Modle - AR)
+<img width="726" height="317" alt="image" src="https://github.com/user-attachments/assets/0049439d-8fb3-455f-b33a-c820cab37015" />
+
+: 문장의 앞에서부터 한 단어씩 순차적으로 예측하는 방식 - 다음 단어를 맞추를 과제에 적합함
+ex) GPT 시리즈, LLaMA , Flacon
+- Casual Laguage Modeling : AR의 대표적인 학습 방식, 현재 단어 예측 시 앞 단어만 이용함
+  - 각 토큰의 예측은 기존 입력에만 의존하며 미래 토큰은 절대 접근하지 않음
+ 
+## 6. Decoder-only-model
+<img width="376" height="514" alt="image" src="https://github.com/user-attachments/assets/7fdb9a77-fc93-49d1-a6d2-fb5df1d26101" />
+
+: Transformer의 디코더만을 사용하는 모델 구조 -> 출력 = 다음 단어의 확률 분포
+- GPT : AR계열의 CLM 방식으로 학습된 Decoder-only  구조의 모델
+
+## 7.  Encoder & Decoder with Tasformer
+<img width="326" height="441" alt="image" src="https://github.com/user-attachments/assets/037d375c-29c5-450d-a8f6-8bbeefcd9d8f" />
+
+### Encoder
+- 입력 : 전체 문장
+- 구조 : Self-Attention
+  - 입력 문장의 모든 단어가 서로를 참고 (양방향)
+- 출력 : 입력과 같은 길이의 단어 의미 벡터
+- 특징 : 문장 의미, 관계 파악에 최적화
+
+### Decoder 
+- 입력 : 이전까지 생성된 단어 시퀀스
+- 구조 :
+  - Masked Self-Attention: 현재 단어는 이전 단어까지만 참고 (단방향)
+  - Cross-Attention
+- 출력 : 다음 단어 확률 분포
+- 특징 : 텍스트 생성에 강함
+
+# 05. RAG
+
+## 1. LLM을 가르치는 두 가지 방법
+
+<img width="1046" height="449" alt="image" src="https://github.com/user-attachments/assets/4d0e2594-11c7-4996-92b6-5cad33f3f810" />
+
+## 2. RAG  시스템 구성 요소
+<img width="708" height="364" alt="image" src="https://github.com/user-attachments/assets/c1b64d20-f089-4759-9092-702c8b5ae9d6" />
+
+- 지식기반을 담고 있는 외부 문서
+- Vector DB: 외부 문서를 저장함
+- Embedding Model : 텍스트를 벡터로 변환
+- LLM : 검색된 문서를 반영해 답변 생성
+
+## 3. RAG 시스템 작동 단계
+<img width="609" height="337" alt="image" src="https://github.com/user-attachments/assets/9c5c194d-e680-46b8-aa3a-b4c444a6ac3e" />
+
+### 1. 지식 기반 생성 ( = 외부 데이터를 저장하는 과정 )
+- 데이터 로드 -> 적절한 크기로 청킹 -> 임베딩 벡터로 표현 -> Vector DB에 저장
+  - 청킹 : 여러 정보를 의미 있는 작은 덩어리(청크)로 묶어 기억하거나 처리하는 인지적 방법
+  
+### 2. 연관 문서 검색
+- 사용자의 질문을 임베딩 벡터로 변환 -> Vector DB 에서 유사한 문서를 검색함
+
+### 3. 답변 생성
+- 검색된 문서를 기반으로 원래의 질문과 함께 LLM에 입력하여 답변을 생성

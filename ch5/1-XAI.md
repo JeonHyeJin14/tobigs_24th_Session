@@ -94,3 +94,125 @@ AI 모델은 이 사진을 보고 가장 가능성이 높은 세 가지 항목�
 - 블랙박스 모델 : LIME, Kernel SHAP (Model-agnostic)
 
 # 03.XAI methods
+
+## 1. LIME (Local Interpretable Model-agnostic Explanations)
+
+### 1) 아이디어
+- 복잡한 모델의 개별 예측을 설명하는 방법
+- 원래 모델 (f)는 블랙박스 -> 대신 단순한 해석 가능한 모델 (g)로 근사
+- 데이터 포인트 주변을 샘플링해서 지역적으로 설명함
+
+### 2) 목표
+- 복잡한 결정 경계 대신에 단순한 선형 모델로 해석 가능하게 만들기
+- ex )  '이 환자가 독감으로 분류된 이유는 기침 + 두통 - 피로없음 때문'
+
+### 3) 방법
+1. 관심 있는 데이터 포인트 주변에서 샘플 생성
+2. 원래 모델 f로 예측
+3. 근처 샘플일수록 높은 가중치 부여함
+4. 단순한 모델 g를  학습 -> 설명 모델
+
+### 4) 수식
+<img width="399" height="73" alt="image" src="https://github.com/user-attachments/assets/7b8c0b70-6295-4b12-b51d-3663fce6b17d" />
+
+- f : 원래 모델
+- g : 해석 가능한 모델 (선형)
+ - πx : x 주변 데이터에 가중치  
+- Ω(g) : 너무 복잡해지지 않도록 규제
+
+ -> 핵심 : 복잡성과 해석력은 Trade off
+
+### 5) 장점 및 한계
+장점
+
+- 모델 불문
+- 개별 예측을 직관적으로 설명함
+
+한계점
+- 지역적 근사라서 불안정할 수 있음
+- 샘플링 방법에 따라서 설명이 달라질 수 있음
+
+## 2. SHAP (SHapley Additive exPlanations)
+
+### 1) 배경
+- 여러 XAI 방법들 중에서 언제 어떤 걸 써야하는지 불명확함
+- SHAP은 이를 게임이론 기반으로 정리한 통일된 접근법
+
+### 2) 핵심 아이디어
+1. Shapley Value (Game Theory)
+<img width="594" height="132" alt="image" src="https://github.com/user-attachments/assets/c39f7285-3d4a-43f5-a777-5fd94e774c93" />
+
+   - 각 특징이 예측에 얼마나 기여했는지를 공정하게 분배함
+   - 모든 가능한 조합에서 해당 특징이 추가될 때의 기여도를 평균함
+
+2. Additive Feature Attribution
+<img width="626" height="119" alt="image" src="https://github.com/user-attachments/assets/bee6a8ca-16fa-43c9-98c7-f5ddc1755b8d" />
+
+   - 최종 예측을 모든 특징 기여도의 합으로 표현
+   - 단순하고 직관적인 선형 구조
+
+### 3) 장점
+- 일관성 : 모델이 특정 feature에 더 의존할수록 SHAP 값도 커짐
+- 지역 + 전역 설명 가능 :
+  - 개별 샘플 : 어떤 feature가 결과에 영향을 줬는지
+  - 전체 데이터 : 전역적으로 중요한 feature는 무엇인지
+
+### 4) 계산 복잡도
+- 기본 Shapley 계산 -> 현실적으로 불가능함
+- 근사 방법이 필요
+ - **Kernel SHAP** (샘플링 기반)  
+ - **Tree SHAP** (트리 모델에 최적화, 빠름)  
+ - **Deep SHAP** (딥러닝 모델용)  
+
+### 5) 시각화 예시
+<img width="413" height="288" alt="image" src="https://github.com/user-attachments/assets/9e0c2855-602f-4ac6-913a-e28bfe4ae763" />
+
+## 3.Grad-CAM (Gradient-weighted Class Activation Mapping)
+
+### 1) 배경 (CAM)
+- CAM (Class Activation Mapping) : CNN이 어떤 영역을 보고 분류했는지 시각화함
+- 방식 : 마지막 Convolution Layer -> GAP -> FC ->Softmax
+- 한계 : 특정 구조에서만 가능함 -> Object Detection 등에는 사용 어려움
+
+### 2) Grad-CAM 아이디어
+<img width="456" height="303" alt="image" src="https://github.com/user-attachments/assets/1a43aa6e-dc34-454d-9648-c647efac7ac6" />
+
+- Gadient 활용 : 특정 클레스에 대한 예측 점수가 feature map에 얼마나 민감한지
+- 마지막 Convolution Layer의 feature map + Gradient -> 가중치 맵 생성
+- ReLU 적용해서 class-specific heatmap 생성
+
+### 3) 핵심 수식
+<img width="444" height="147" alt="image" src="https://github.com/user-attachments/assets/fb178c31-2a8f-4cae-b68f-21c33b7a1fec" />
+
+### 4) 장점
+- 어떤 CNN 구조에도 적용 가능 (CAM 보다 범용적)
+- 분류, Detection, Captioning등 다양한 비전 task 지원
+- class-specific 영역 시각화 가능
+
+### 5) 한계점
+- 해상도 낮음
+- pixel-level 정확도 부족
+
+## 4. TCAV (Testing with Concept Activation Vectors)
+<img width="1004" height="487" alt="image" src="https://github.com/user-attachments/assets/2cd7a6ca-2cc9-4d5c-9d88-05d5bfa8869f" />
+
+### 1) 아이디어
+- TCAV는 모델이 사용자 정의 개념에 얼마나 의존하는지 측정하는 방법
+- ex ) "줄무늬(stripes)" 또는 "색(color)" 개념이 이미지 분류 결과에 얼마나 영향을 미쳤는가?
+
+### 2) 방법
+1. Concept 데이터와 Random 데이터 준비
+2. 모델의 중간 계층 (activation) 추출
+3. 선형 분류기 (Linear model)을 학습 시켜서 개념 vs 가짜를 구분 -> Concept Activation Vector (CAV)얻음
+4. CAV 방향과 클래스 예측 점수의 gradient 내적 -> 해당 개념이 예측에 기여했는지 측정
+
+### 3) 수식
+<img width="1090" height="551" alt="image" src="https://github.com/user-attachments/assets/3b6606ac-99b5-46f2-a023-dc46469b49d1" />
+
+- TCAV 점수: 데이터 중 몇 %가 개념 v에 양의 기여를 받았는지 
+- 해석 : "클래스 k를 예측할 때 개념 v가 얼마나 자주 긍정적 영향을 주는가?"
+
+### 4) 장점
+- 사용자 친화적 : 도메인 지식을 직접 반영이 가능하다
+- 해석이 직관적임
+- 전통적인 feature importance와 달리 고차원 개념 단위 설명 제공

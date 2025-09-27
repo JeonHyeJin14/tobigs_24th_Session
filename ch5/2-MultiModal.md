@@ -97,7 +97,7 @@
 - 장점 : 의미 비교 용이함, 모달리티 간 상호작용 강화
 - 단점 : 정보 손실 가능, 학습 어려움
 
-## 3. Joint Representation
+## 3. 서로 다른 모달리티를 융합하는 방
 - Additive : 각 모달리티 인코딩 결과를 더해서 (shared layer) 선형 결합
 - Tensor Fusion Network (TFN) : 텐서 외적을 통해서 모든 상호작용 포착
 - MCB (Multimodel Compact Bilinear Pooling) : TFN의 차원 폭발 문제를 해결함 , 효율적으로 근사
@@ -116,3 +116,23 @@
 - 손실 함수:
   - Loss_gen: 생성 문장의 단어별 조건부 확률 (log likelihood)
   - Loss_sem: 생성된 문장 벡터와 원본 의미 벡터 간 거리
+
+# 04. Fusion Strategy
+
+## 1. Definition of MultiModel Fusion
+- 여러 다른 형태의 데이터를 결합해서 특정 문제나 현상을 더 깊게 분석하는 과정
+- 구조
+  1. 각 모달별 인코딩
+  2. Fusion module에서 결합
+  3. Classification/Prediction 단계로 결과도출
+
+## 2. why Multimodality Matters
+- 한 가지 모달보다 여러가지 모달을 함께 쓰면 더 정확한 결과 가능
+- 예
+  - 텍스트 + 이미지 모델 -> 감정 인식 정확도 향상
+  - 오디오 + 비디오 + 텍스트 -> 사용자 경험 분석 강화
+  - 자율주행 , AR/VR -> 다양한 센서 데이터를 융합해야 안정성이 증가함
+
+## 3. Fusion Strategies (융합방식)
+멀티모달 데이터를 결합하는 방법은 크게 4가지
+### 1. Early Fusion

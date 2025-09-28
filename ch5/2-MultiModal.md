@@ -136,3 +136,107 @@
 ## 3. Fusion Strategies (융합방식)
 멀티모달 데이터를 결합하는 방법은 크게 4가지
 ### 1. Early Fusion
+- 여러 모달 데이터를 입력 단계에서 바로 결합
+- 장점 : 모든 데이터 활용, 처음부터 풍부한 정보 반영
+- 단점 : 노이즈 포함 위험 , 서로 다른 데이터 특성 차이 문제
+
+### 2. Late Fusion
+- 각 모달 데이터를 따로 처리함 -> 출력 단계에서 결합
+- 장점 : 구조단순, 해석이 쉬움
+- 단점 : 모달 간 상호작용 부족 (깊은 관계 반영 어려움)
+
+### 3. joint/intermediate Fusion
+- 각 모달에서 특징을 뽑아내고 중간 representation에서 결합
+- 장점 : 상호작용 반영 가능, 풍부한 표현
+- 단점 : 계산이 복잡함, 처리 시간 증가
+
+### 4. Hybrid Fusion
+- 세 가지의 방식을 상황에 맞게 섞어서 사용함
+- 장점 : 유연하게 적용가능, 다양한 장점 활용
+- 단점 : 설계 난이도 상승, 구현이 복잡함
+
+## 4. CLIP
+- Contrastive Language-Image Pretraining
+- 텍스트와 이미지를 같은 공간에 임베딩해서 서로 비교 가능
+- 예
+  - 텏트ㅡ - 이미지 -> 텍스트 검색
+- cosine similarity , Euclidean distance로 유사도 측정
+- 유사도가 높은 후보를 정렬 -> Top-K 평가
+
+# 03. Learning Representation
+
+## 1. Representation 유형
+- Joint Representation : 여러 모달리티를 같은 공간에 임베딩함
+- Coordinated Representation : 각 모달리티는 다른 공간에 임베딩 , 하지만 공통 의미 구조 유지
+- Encoder-Decoder : 입력 모달리티를 임베딩 후 , 다른 모달리티를 생성함
+
+## 2. Joint Representation
+- 서로 다른 데이터를 하나의 공간에 융합함 -> 직관적인 의미 비교가 가능함
+- 예시 : Additive, Tensor Fusion Network, MCB
+- 장점 : 의미 비교 용이함, 모달리티 간 상호작용 강화
+- 단점 : 정보 손실 가능, 학습 어려움
+
+## 3. 서로 다른 모달리티를 융합하는 방
+- Additive : 각 모달리티 인코딩 결과를 더해서 (shared layer) 선형 결합
+- Tensor Fusion Network (TFN) : 텐서 외적을 통해서 모든 상호작용 포착
+- MCB (Multimodel Compact Bilinear Pooling) : TFN의 차원 폭발 문제를 해결함 , 효율적으로 근사
+
+## 4. Coordinated Representation
+- 서로 다른 공간에 임베딩하되, 공통된 의미 구조 유지
+- 학습 기법 :
+  - Cross-modal Ranking : 정답 쌍은 가깝게 , 오답 쌍은 멀게 학습함
+  - Euclidean Distance : 서로 다른 모달리티 간 거리 최소화
+- 장점 : 모달리티 특성 보존 , 학습 안정성
+- 단점 : 직접 비교가 어려움, 연산 복잡도 증가
+
+## 5. Encoder-Decoder
+- 입력 모달리티 -> 임베딩 -> 다른 모달리티 생성
+-  예시: 이미지 입력 → 텍스트 설명 생성 (Image Captioning)
+- 손실 함수:
+  - Loss_gen: 생성 문장의 단어별 조건부 확률 (log likelihood)
+  - Loss_sem: 생성된 문장 벡터와 원본 의미 벡터 간 거리
+
+# 04. Fusion Strategy
+
+## 1. Definition of MultiModel Fusion
+- 여러 다른 형태의 데이터를 결합해서 특정 문제나 현상을 더 깊게 분석하는 과정
+- 구조
+  1. 각 모달별 인코딩
+  2. Fusion module에서 결합
+  3. Classification/Prediction 단계로 결과도출
+
+## 2. why Multimodality Matters
+- 한 가지 모달보다 여러가지 모달을 함께 쓰면 더 정확한 결과 가능
+- 예
+  - 텍스트 + 이미지 모델 -> 감정 인식 정확도 향상
+  - 오디오 + 비디오 + 텍스트 -> 사용자 경험 분석 강화
+  - 자율주행 , AR/VR -> 다양한 센서 데이터를 융합해야 안정성이 증가함
+
+## 3. Fusion Strategies (융합방식)
+멀티모달 데이터를 결합하는 방법은 크게 4가지
+### 1. Early Fusion
+- 여러 모달 데이터를 입력 단계에서 바로 결합
+- 장점 : 모든 데이터 활용, 처음부터 풍부한 정보 반영
+- 단점 : 노이즈 포함 위험 , 서로 다른 데이터 특성 차이 문제
+
+### 2. Late Fusion
+- 각 모달 데이터를 따로 처리함 -> 출력 단계에서 결합
+- 장점 : 구조단순, 해석이 쉬움
+- 단점 : 모달 간 상호작용 부족 (깊은 관계 반영 어려움)
+
+### 3. joint/intermediate Fusion
+- 각 모달에서 특징을 뽑아내고 중간 representation에서 결합
+- 장점 : 상호작용 반영 가능, 풍부한 표현
+- 단점 : 계산이 복잡함, 처리 시간 증가
+
+### 4. Hybrid Fusion
+- 세 가지의 방식을 상황에 맞게 섞어서 사용함
+- 장점 : 유연하게 적용가능, 다양한 장점 활용
+- 단점 : 설계 난이도 상승, 구현이 복잡함
+
+## 4. CLIP
+- Contrastive Language-Image Pretraining
+- 텍스트와 이미지를 같은 공간에 임베딩해서 서로 비교 가능
+- 예 : 텍스트 "a cat wearing sunglasses" -> 이미지 (고양이+선글라스) 매칭 = 모델이 높은 확률로 정답 맞춤
+- 특징 : 텍스트 인코더와 이미지 인코더가 따로 있음, 결과적으로 Late FUsion 사용
+

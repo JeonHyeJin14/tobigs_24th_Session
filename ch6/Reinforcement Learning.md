@@ -70,18 +70,42 @@
 
 ## 1. 상태가치 함수에 대한 벨만 방정식
 - V(s) = '지금 상태 s에서 시작해 앞으로 받을 즉시 보상 + (할인된) 미래 보상의 기댓값'
-- $$
-V(s) = \sum_a \pi(a|s) \sum_{s'} p(s'|s,a)\,[r(s,a,s') + \gamma V(s')]
-$$
+
 - 미래 보상은 한 번 앞을 내다보고 " 다음 상태의 가치 V(다음 상태)"로 묶어서 계산한다
 -> 이것이 벨만 식의 핵심 아이디어 (자기참조/재귀)
-\[
-\boxed{\,V_\pi(s)=\sum_a \pi(a|s)\sum_{s'} p(s'|s,a)\,[\,r(s,a,s')+\gamma V_\pi(s')\,]\,}
-\]
+
+### 1) 벨만 방정식 (정책 π가 주어졌을 때)
+- 상태 s에서 정책 π가 고른 행동 a,그 행동으로 갈 다음 상태의 확률을 모두 고려해서 즉시 보상 + γ·다음 상태의 가치의 기대값을 합친다.
+<img width="698" height="96" alt="image" src="https://github.com/user-attachments/assets/f4bcbfbb-8674-489d-a101-b6ea5e8a32f0" />
+
+- π(a|s): 상태 s에서 a를 고를 확률(정책)
+- p(s′|s,a): s에서 a했을 때 s′로 갈 확률(전이)
+- r(s,a,s′): 그때 받는 즉시 보상
+- γ: 할인율(0~1)
+
+### 2) 벨만 '최적' 방정식 (최적 정책을 찾을 때)
+- 정책을 모르면, 그 순간 가장 좋은 행동을 고르면 된다 -> 기대값 대신에 max
+
+<img width="763" height="80" alt="image" src="https://github.com/user-attachments/assets/92de7171-b559-439f-be28-27bca0cbab51" />
+
 
 ## 2. 행동 가치 함수에 대한 벨만 방정식
-### 행동 가치 함수
+
+### 1) 행동 가치 함수
 <img width="423" height="338" alt="image" src="https://github.com/user-attachments/assets/4ea3224d-9b21-4f76-b699-384df6f0c892" />
 
 - 시간 t일때 상태 s에서 행동 a를 취하고 시간 t+1부터는 정책에 따라 행동을 결정할 때 얻을 수 있는 기대수익
 - 상태 가치 함수 + 행동 a(조건) = 행동 가치 함수
+
+### 2) 벨만 방정식
+- 현재 보상 + 미래 보상의 기대값
+- Q함수는 "지금 이 행동을 하면 앞으로 얼마나 보상이 쌓일까?"를 계산하는 도구
+<img width="937" height="110" alt="image" src="https://github.com/user-attachments/assets/09948fe9-8214-407b-9e80-0fb0ffac77e7" />
+
+### 3) 벨만 최적 방정식
+- 일반 정책 : 평균적으로 따르는 정책에 따라 행동을 선택함
+- 최적 정책 : 모든 상태에서 가장 큰 보상을 주는 행동을 선택
+- 따라서 Q 함수는 "지금 행동했을 때 최선의 선택을 계속했을 경우 얻을 총 보상"
+
+<img width="944" height="100" alt="image" src="https://github.com/user-attachments/assets/4cdc3199-5f34-4bf0-9ad3-e850b26ab208" />
+
